@@ -2,8 +2,11 @@ import streamlit as st
 import joblib
 import pandas as pd
 from transformers import Preprocessing
+import requests
 
-st.set_page_config(page_title='today news', page_icon='🗞️', layout='wide')
+
+
+st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
 
 pipeline = joblib.load('Pipeline.plk')
 le = joblib.load('Encoder.plk')
