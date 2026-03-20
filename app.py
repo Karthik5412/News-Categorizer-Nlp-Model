@@ -26,7 +26,6 @@ st.title('Todays News')
 
 data = requests.get(url).json()
 
-st.json(data)
 
 articles = data.get('articles', [])
 filtered_news = [
