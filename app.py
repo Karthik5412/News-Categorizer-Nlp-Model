@@ -3,25 +3,25 @@ import joblib
 import pandas as pd
 from transformers import Preprocessing
 import requests
-from newspaper import Article
+from pygooglenews import GoogleNews
 
 st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
 
-def paper(url) :
-    article = Article(url)
+# def paper(url) :
+#     article = Article(url)
     
-    article.download()
-    article.parse()
+#     article.download()
+#     article.parse()
     
-    data = {
-        "title": article.title,
-        "text": article.text,        
-        "top_image": article.top_image, 
-        "images": article.images,    
-        "date": article.publish_date
-    }
+#     data = {
+#         "title": article.title,
+#         "text": article.text,        
+#         "top_image": article.top_image, 
+#         "images": article.images,    
+#         "date": article.publish_date
+#     }
     
-    return data
+#     return data
 
 bbc = 'https://www.bbc.com/news/world/asia/india'
 
@@ -38,10 +38,19 @@ st.title('Todays News')
 # headline = st.text_input('Enter Headline')
 # content = st.text_area('Enter Content')
 
+gn = GoogleNews(country = "IN")
 
-news_data = paper(url)
-print(f"Title: {news_data['title']}")
-print(f"Top Photo: {news_data['top_image']}")
+search = gn.search('entertainment')
+
+for item in search['entries'] :
+    st.success(item['title'])
+    
+
+st.success(search)
+
+# news_data = paper(url)
+# print(f"Title: {news_data['title']}")
+# print(f"Top Photo: {news_data['top_image']}")
 
 # data = {
 #     'Headline' : [headline],
