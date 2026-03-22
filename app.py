@@ -7,27 +7,22 @@ from pygooglenews import GoogleNews
 
 st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
 
-# def paper(url) :
-#     article = Article(url)
-    
-#     article.download()
-#     article.parse()
-    
-#     data = {
-#         "title": article.title,
-#         "text": article.text,        
-#         "top_image": article.top_image, 
-#         "images": article.images,    
-#         "date": article.publish_date
-#     }
-    
-#     return data
+def data_api(url) :
+    data = []
 
-bbc = 'https://www.bbc.com/news/world/asia/india'
+    gn = GoogleNews(country = "IN")
 
-api_key = '04b51110e62d2ee68a1d58b2834fc9ed'
+    search = gn.search('entertainment')
+    data = {}
 
-url = f'https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=in&max=10&apikey={api_key}'
+    # for item in search['entries'] :
+    #     data = {
+    #         'Headline' :,
+            
+    #     }
+
+
+
 
 
 pipeline = joblib.load('Pipeline.plk')
@@ -35,45 +30,22 @@ le = joblib.load('Encoder.plk')
 
 st.title('Todays News')
 
-# headline = st.text_input('Enter Headline')
-# content = st.text_area('Enter Content')
 
 gn = GoogleNews(country = "IN")
 
 search = gn.search('entertainment')
 
 for item in search['entries'] :
-    st.success(item['title'])
     
-
-st.success(search)
-
-# news_data = paper(url)
-# print(f"Title: {news_data['title']}")
-# print(f"Top Photo: {news_data['top_image']}")
-
-# data = {
-#     'Headline' : [headline],
-#     'Content' : [content]
-# }
-
-data = requests.get(url).json()
+    st.json(item)
+    st.success('End')
 
 
-articles = data.get('articles', [])
-filtered_news = [
-    {
-        "Headline": a['title'], 
-        "link": a['url'], 
-        "Content" : a['content'] + ' ' + a['description'],
-        "source": a['source']['name']
-    } 
-    for a in articles
-]
 
-df = pd.DataFrame(filtered_news)
 
-# btn = st.button('Predict')
+
+
+
 
 
 pred = pipeline.predict(df[['Headline', 'Content']])
