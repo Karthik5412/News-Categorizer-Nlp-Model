@@ -3,7 +3,9 @@ import joblib
 import pandas as pd
 from transformers import Preprocessing
 import requests
-from pygooglenews import GoogleNews
+from newspaper import Article
+from bs4 import BeautifulSoup
+
 
 st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
 
@@ -30,15 +32,8 @@ le = joblib.load('Encoder.plk')
 
 st.title('Todays News')
 
+url = 'https://www.bbc.com/news/world/asia/india'
 
-gn = GoogleNews(country = "IN")
-
-search = gn.search('entertainment')
-
-for item in search['entries'] :
-    
-    st.json(item)
-    st.success('End')
 
 
 
