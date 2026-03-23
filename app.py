@@ -44,10 +44,6 @@ for item in search['entries'] :
 
 
 
-
-
-
-
 pred = pipeline.predict(df[['Headline', 'Content']])
     
 df['pred'] = le.inverse_transform(pred)
