@@ -5,42 +5,59 @@ from transformers import Preprocessing
 import requests
 from newspaper import Article
 from bs4 import BeautifulSoup
-
-
-st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
-
-def data_api(url) :
-    data = []
-
-    gn = GoogleNews(country = "IN")
-
-    search = gn.search('entertainment')
-    data = {}
-
-    # for item in search['entries'] :
-    #     data = {
-    #         'Headline' :,
-            
-    #     }
-
-
-
-
+import cloudscraper 
 
 pipeline = joblib.load('Pipeline.plk')
 le = joblib.load('Encoder.plk')
 
+st.set_page_config(page_title='Today news', page_icon='📰', layout='wide')
+
+
+def article_links(url) :
+    scraper = cloudscraper.create_scraper(
+    browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
+    )
+    
+    links = set()
+    
+    try :
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            soup = BeautifulSoup.get(response.text, 'html.parse')
+            
+            all_links = soup.find_all('a', href = True)
+            
+            for link in all_links :
+                href = link['href']
+                
+                if href.endswith('.html') and '/static-pages/' not in href:
+                    if href.startswith('/'):
+                        full_url = f"https://www.hindustantimes.com{href}"
+                elif href.startswith('https://www.hindustantimes.com'):
+                    full_url = href
+                else:
+                    continue
+                
+                links.add(full_url)
+                
+            return links
+        
+    except Exception as e:
+        st.success(f"Error: {e}")
+
+
+def DataFrame(links) :
+    
+    pass
+
+
 st.title('Todays News')
 
-url = 'https://www.bbc.com/news/world/asia/india'
+url = "https://www.hindustantimes.com/"
 
 
 
 
 
 
-pred = pipeline.predict(df[['Headline', 'Content']])
-    
-df['pred'] = le.inverse_transform(pred)
-
-st.dataframe(df)
