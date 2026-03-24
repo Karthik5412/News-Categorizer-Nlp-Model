@@ -47,9 +47,16 @@ def article_links(url) :
         st.success(f"Error: {e}")
 
 
-def DataFrame(links) :
+def DataFrame(url) :
     
-    pass
+    article = Article(url)
+    
+    article.download()
+    article.parse()
+    
+    article.download('punckt')
+    
+    article.nlp()
 
 
 st.title('Todays News')
