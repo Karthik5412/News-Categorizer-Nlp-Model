@@ -1,8 +1,8 @@
-from newspaper import Article
 from bs4 import BeautifulSoup
 import cloudscraper 
 import pandas as pd
 import re 
+from urllib.parse import urljoin
 
 scraper = cloudscraper.create_scraper(
     browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
@@ -39,42 +39,70 @@ def article_links(url) :
 
 
 def UserDefinedData(url) :
+    try :
+        response = scraper.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        
+        content = soup.find('div', class_='artContent')
+        
+        clean_text = content.get_text(separator=' ', strip=True)
+        
+        text = clean_text[:1500]
+        img_links = set()
+        for img in soup.find_all('img'):
+            src = img.get('src')
+            if src:
+                absolute_url = urljoin(url, src)
+                img_links.add(absolute_url)
+        
+        headline = soup.find('h1').get_text(separator=' ', strip= True)
+        
+        
+        image = []
+        for img in img_links:
+            if '.jpg' in img or '.jpeg' in img:
+                image.append(img)
+        
+        
+        data = {
+            'Headline' : str(headline),
+            'Content' : str(text),
+            'Image' : image,
+            'Url' : url
+        }
+        
+        return data
     
-    response = scraper.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    content = soup.find('div', class_='artContent')
-    
-    clean_text = content.get_text(separator=' ', strip=True)
-    
-    text = clean_text[:1500]
-    article = Article(url)
-    
-    article.html = response.text
-    article.download_state = 2
-    article.parse()
-    
-    
-    data = {
-        'Headline' : article.title,
-        'Content' : str(text),
-        'Image' : article.top_image
-    }
-    
-    return data
+    except Exception:
+        data = {
+            'Headline' : '---',
+            'Content' : '---',
+            'Image' : '---',
+            'Url' : '---'
+        }
+        return data 
 
 url = "https://www.hindustantimes.com/"
 
 url_links = article_links(url)
 
-print(UserDefinedData(url_links[0]))
 
-# data = {}
-# for i in range (len(url_links)) :
-#     data[i] = article_links(url_links[i])
+
+
+
+rows = []
+for i in range (len(url_links)) :
+    data = (UserDefinedData(url_links[i]))
+    
+    rows.append(data)
+    
+print(len(rows))
+    
+df = pd.DataFrame(rows)
+df.to_csv('today_news.csv', index=False)
+
+print(df)
     
 
 
-# for value in data.items() :
-#     print(value)
     
