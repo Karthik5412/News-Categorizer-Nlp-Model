@@ -47,7 +47,7 @@ def UserDefinedData(url) :
         
         clean_text = content.get_text(separator=' ', strip=True)
         
-        text = clean_text[:1500]
+        text = clean_text[:3000]
         img_links = set()
         for img in soup.find_all('img'):
             src = img.get('src')
@@ -67,7 +67,7 @@ def UserDefinedData(url) :
         data = {
             'Headline' : str(headline),
             'Content' : str(text),
-            'Image' : image,
+            'Image' : image[0],
             'Url' : url
         }
         
