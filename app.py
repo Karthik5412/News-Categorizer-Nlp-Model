@@ -22,23 +22,30 @@ df['Category'] = df['Category'].astype(str).str.capitalize()
 
 categories = sorted(list(set(item for item in df['Category'])))
 
-
+n = 3
 tabs = st.tabs(categories)
 
 for idx, val in enumerate(categories) :
     with tabs[idx] :
         
-        data = df[df['Category'] == val]
+        data = df[df['Category'] == val].reset_index(drop=True)
         
+        num_rows = (len(data) + n - 1) // n
+        for row_idx in range(num_rows):
+            cols = st.columns(n)
+            
+            for col_idx in range(n) :
+                data_idx = row_idx * n + col_idx
         
-        for i, row in data.iterrows() :
-            
-            
-            with st.container(border= True) :
-                st.image(row['Image'], use_container_width= True)
-                st.subheader(row['Headline'])
-                with st.expander('Article') :
-                    st.write(row['Content'])
+                if data_idx < len(data) :
+                    row = data.iloc[data_idx]
+                    
+                    with cols[col_idx] :
+                        with st.container(border= True) :
+                            st.image(row['Image'], use_container_width= True)
+                            st.subheader(row['Headline'])
+                            with st.expander('Article') :
+                                st.write(row['Content'])
         
 
 
