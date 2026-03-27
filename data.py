@@ -103,6 +103,3 @@ df.to_csv('today_news.csv', index=False)
 
 print(df)
     
-
-
-    
